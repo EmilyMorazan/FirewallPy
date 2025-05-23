@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Firewall Settings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+    <style>
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--header-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-option {
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .theme-option:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--button-shadow);
+        }
+
+        .theme-option.active {
+            border-color: var(--button-bg);
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .settings-section {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .settings-section h3 {
+            margin-top: 0;
+            color: var(--header-text);
+            background-color: var(--header-bg);
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .settings-group {
+            margin: 15px 0;
+        }
+
+        .settings-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .settings-group input[type="text"],
+        .settings-group input[type="number"],
+        .settings-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .settings-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .save-button {
+            background-color: var(--unblock-button);
+            color: var(--button-text);
+            padding: 10px 20px;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            background-color: var(--unblock-button-hover);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>Firewall Settings</h2>
+        <div class="controls">
+            <button class="return-button" onclick="window.location.href='{{ url_for('monitor') }}'">Return to
+                Monitor</button>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <svg viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g>
+                        <polygon points="213.3,26.7 213.3,0 186.7,0 186.7,26.7 186.7,53.3 213.3,53.3"></polygon>
+                        <rect height="26.7" width="26.7" x="53.3" y="53.3"></rect>
+                        <rect height="26.7" width="26.7" x="320" y="53.3"></rect>
+                        <rect height="26.7" width="26.7" x="80" y="80"></rect>
+                        <polygon points="213.3,106.7 240,106.7 240,80 213.3,80 186.7,80 160,80 160,106.7 186.7,106.7">
+                        </polygon>
+                        <rect height="26.7" width="26.7" x="293.3" y="80"></rect>
+                        <rect height="26.7" width="26.7" x="133.3" y="106.7"></rect>
+                        <rect height="26.7" width="26.7" x="240" y="106.7"></rect>
+                        <rect height="26.7" width="26.7" x="106.7" y="133.3"></rect>
+                        <rect height="26.7" width="26.7" x="266.7" y="133.3"></rect>
+                        <polygon points="53.3,186.7 26.7,186.7 0,186.7 0,213.3 26.7,213.3 53.3,213.3"></polygon>
+                        <polygon points="106.7,186.7 106.7,160 80,160 80,186.7 80,213.3 80,240 106.7,240 106.7,213.3">
+                        </polygon>
+                        <polygon
+                            points="293.3,213.3 293.3,240 320,240 320,213.3 320,186.7 320,160 293.3,160 293.3,186.7">
+                        </polygon>
+                        <polygon points="373.3,186.7 346.7,186.7 346.7,213.3 373.3,213.3 400,213.3 400,186.7"></polygon>
+                        <rect height="26.7" width="26.7" x="106.7" y="240"></rect>
+                        <rect height="26.7" width="26.7" x="266.7" y="240"></rect>
+                        <rect height="26.7" width="26.7" x="133.3" y="266.7"></rect>
+                        <rect height="26.7" width="26.7" x="240" y="266.7"></rect>
+                        <rect height="26.7" width="26.7" x="80" y="293.3"></rect>
+                        <polygon
+                            points="186.7,293.3 160,293.3 160,320 186.7,320 213.3,320 240,320 240,293.3 213.3,293.3">
+                        </polygon>
+                        <rect height="26.7" width="26.7" x="293.3" y="293.3"></rect>
+                        <rect height="26.7" width="26.7" x="53.3" y="320"></rect>
+                        <rect height="26.7" width="26.7" x="320" y="320"></rect>
+                        <polygon points="186.7,373.3 186.7,400 213.3,400 213.3,373.3 213.3,346.7 186.7,346.7"></polygon>
+                    </g>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="theme-selector">
+        <div class="theme-option" onclick="setTheme('default')">Default</div>
+        <div class="theme-option" onclick="setTheme('dark')">Dark</div>
+        <div class="theme-option" onclick="setTheme('blue')">Blue</div>
+        <div class="theme-option" onclick="setTheme('purple')">Purple</div>
+    </div>
+
+    <div class="settings-section">
+        <h3>General Settings</h3>
+        <div class="settings-group">
+            <label for="logSize">Log Size:</label>
+            <input type="number" id="logSize" value="200" min="50" max="1000">
+        </div>
+        <div class="settings-group">
+            <label for="refreshInterval">Refresh Interval (ms):</label>
+            <input type="number" id="refreshInterval" value="2000" min="1000" max="10000">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Appearance Settings</h3>
+        <div class="settings-group">
+            <label for="backgroundColor">Background Color:</label>
+            <input type="color" id="backgroundColor" value="#f0f8ff">
+        </div>
+    </div>
+
+    <div class="settings-section">
+        <h3>Firewall Rules</h3>
+        <div class="settings-group">
+            <label for="maxConnections">Maximum Connections per IP:</label>
+            <input type="number" id="maxConnections" value="100" min="10" max="1000">
+        </div>
+        <div class="settings-group">
+            <label for="blockDuration">Block Duration (minutes):</label>
+            <input type="number" id="blockDuration" value="30" min="5" max="1440">
+        </div>
+    </div>
+
+    <button class="save-button" onclick="saveSettings()">Save Settings</button>
+
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+    <script>
+        // Load saved settings when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            loadSettings();
+            updateThemeSelector(document.body.getAttribute('data-theme') || 'default');
+        });
+
+        function loadSettings() {
+            fetch('/get_settings')
+                .then(response => response.json())
+                .then(settings => {
+                    document.getElementById('logSize').value = settings.logSize || 200;
+                    document.getElementById('refreshInterval').value = settings.refreshInterval || 2000;
+                    document.getElementById('maxConnections').value = settings.maxConnections || 100;
+                    document.getElementById('blockDuration').value = settings.blockDuration || 30;
+                    document.getElementById('backgroundColor').value = settings.backgroundColor || '#f0f8ff';
+                })
+                .catch(error => {
+                    console.error('Error loading settings:', error);
+                });
+        }
+
+        function saveSettings() {
+            const settings = {
+                logSize: document.getElementById('logSize').value,
+                refreshInterval: document.getElementById('refreshInterval').value,
+                maxConnections: document.getElementById('maxConnections').value,
+                blockDuration: document.getElementById('blockDuration').value,
+                backgroundColor: document.getElementById('backgroundColor').value,
+                theme: document.body.getAttribute('data-theme') || 'default'
+            };
+
+            fetch('/save_settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Settings saved successfully!');
+                    // Apply theme to all pages
+                    localStorage.setItem('theme', settings.theme);
+                    setTheme(settings.theme);
+                    // Apply background color immediately
+                    document.body.style.backgroundColor = settings.backgroundColor;
+                })
+                .catch(error => {
+                    console.error('Error saving settings:', error);
+                    alert('Error saving settings. Please try again.');
+                });
+        }
+
+        // Override the setTheme function to update the theme selector
+        const originalSetTheme = window.setTheme;
+        window.setTheme = function (theme) {
+            originalSetTheme(theme);
+            updateThemeSelector(theme);
+        };
+
+        function updateThemeSelector(theme) {
+            document.querySelectorAll('.theme-option').forEach(option => {
+                option.classList.remove('active');
+                if (option.textContent.toLowerCase() === theme) {
+                    option.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

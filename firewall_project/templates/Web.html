@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="{{url_for('static', filename = 'styless.css')}}" />
+
+  <!-- Link to external JavaScript file -->
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <title>Firewall Analyzer - Home</title>
+
+  <!-- what's change to keep a single light mode -->
+  <script>
+    window.addEventListener("DOMContentLoaded", function () {
+      const stored = localStorage.getItem("theme") || "light";
+      const slider = document.getElementById("mode-slider");
+
+      if (slider) {
+        slider.value = stored === "dark" ? 1 : 0;
+        toggleMode(slider); // Properly apply full theme
+      }
+    });
+
+  </script>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='styless.css') }}" />
+
+</head>
+
+<body>
+  <!-- Light Mode Background Video -->
+  <video id="bg-video-light" class="bg-video light-bg" autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='videos/light_background.mp4') }}" type="video1/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Dark Mode Background Video -->
+  <video id="bg-video-dark" class="bg-video dark-bg" autoplay muted loop playsinline>
+    <source src="{{ url_for('static', filename='videos/dark_background.mp4') }}" type="video2/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Sidebar navigation -->
+  <div class="sidebar">
+    <nav>
+      <!-- Home button with SVG icon -->
+      <button onclick="window.location.href='{{ url_for('home') }}'">
+        <svg class="house_i_think" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+          <!-- Home icon (Font Awesome) -->
+          <path
+            d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+        </svg>
+        Home
+      </button>
+    </nav>
+
+    <nav>
+      <!-- Monitor button -->
+      <button onclick="window.location.href='{{ url_for('monitor') }}'">
+        <svg class="monitor_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+          <!-- Monitor icon -->
+          <path
+            d="M64 0C28.7 0 0 28.7 0 64L0 352c0 35.3 28.7 64 64 64l176 0-10.7 32L160 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-69.3 0L336 416l176 0c35.3 0 64-28.7 64-64l0-288c0-35.3-28.7-64-64-64L64 0zM512 64l0 224L64 288 64 64l448 0z" />
+        </svg>
+        Monitor
+      </button>
+    </nav>
+
+    <nav>
+      <!-- Info button -->
+      <button onclick="window.location.href='{{ url_for('info') }}'">
+        <svg class="info_icon" xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+          <path
+            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336l24 0 0-64-24 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l48 0c13.3 0 24 10.7 24 24l0 88 8 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-80 0c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z" />
+        </svg>
+        Info
+      </button>
+    </nav>
+
+    <!-- Policies button -->
+    <button onclick="window.location.href='{{ url_for('activity') }}'">
+      <svg class="policies_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <!-- Policies icon -->
+        <path
+          d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0z" />
+      </svg>
+      Activity
+    </button>
+
+
+    <button onclick="window.location.href='{{ url_for('setting') }}'">
+      <svg class="extra_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path
+          d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z" />
+      </svg>
+      Setting
+    </button>
+
+    <button onclick="window.location.href='{{ url_for('credits') }}'">
+      <svg class="extra_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path
+          d="M192 0c-41.8 0-77.4 26.7-90.5 64L64 64C28.7 64 0 92.7 0 128L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64l-37.5 0C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192l160 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-160 0c-8.8 0-16-7.2-16-16s7.2-16 16-16z" />
+      </svg>
+      Credits
+    </button>
+
+
+
+    <!-- Video section -->
+    <div class="imagecontainer">
+      <video class="imagecontainer" height="100vh" autoplay loop muted playsinline>
+        <!-- <source src="static/templates/video1.mp4." type="video/mp4" /> -->
+        <source src="{{ url_for('static', filename='Recording2.mp4') }}" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <source src="{{ url_for('static', filename='video1.mp4') }}" type="video/mp4" />
+
+  <div class="main-content">
+    <h2>Dashboard</h2>
+    <label class="mode-slider-label" for="mode-slider">Light/Dark Mode</label>
+    <input type="range" id="mode-slider" class="mode-slider" min="0" max="1" step="1" value="0"
+      onchange="toggleMode(this)" />
+    <!-- 
+    <div class="card">
+      <h3>Live Network Speed</h3>
+      <canvas id="speedChart" height="200"></canvas>
+    </div> -->
+
+    <div class="traffic-card">
+      <h3>Traffic Overview</h3>
+      <canvas id="trafficOverviewChart" height="200"></canvas>
+    </div>
+
+    <!-- Traffic Overview -->
+    <div class="network-card">
+      <h3>Network Overview</h3>
+      <canvas id="homeNetworkChart" height="200"></canvas>
+    </div>
+
+    <!-- Top 5 IPs -->
+    <div class="ips-card">
+      <h3>Top IPs</h3>
+      <div class="ip-stats">
+        <div class="blocked-ips">
+          <h4>Blocked IPs</h4>
+          <table id="blockedIpsTable">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>Packets</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="allowed-ips">
+          <h4>Allowed IPs</h4>
+          <table id="allowedIpsTable">
+            <thead>
+              <tr>
+                <th>IP</th>
+                <th>Packets</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Video that switches based on theme -->
+    <div class="video">
+      <video id="theme-video" autoplay loop muted playsinline>
+        <source id="theme-video-source" src="{{ url_for('static', filename='video1.mp4') }}" type="video/mp4" />
+      </video>
+    </div>
+
+    <br />
+    <script>  document.addEventListener("DOMContentLoaded", function () {
+        const homeChartEl = document.getElementById("homeNetworkChart");
+        // trying for naother chart
+        // const connectionsChartEl = document.getElementById("trafficOverviewChart");
+        if (!homeChartEl) return; // Exit if chart doesn't exist on this page
+
+        const ctx = homeChartEl.getContext("2d");
+        const homeChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: [],
+            datasets: [{
+              label: 'Download Speed (Mbps)',
+              data: [],
+              borderColor: 'rgba(75, 192, 192, 1)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        let speed = 0;
+
+        async function fetchSpeed() {
+          try {
+            const res = await fetch("/network_speed");
+            const data = await res.json();
+            speed = data.download;
+          } catch (e) {
+            console.error("Failed to fetch speed", e);
+          }
+        }
+
+        function updateChart() {
+          const now = new Date().toLocaleTimeString();
+          if (homeChart.data.labels.length > 20) {
+            homeChart.data.labels.shift();
+            homeChart.data.datasets[0].data.shift();
+          }
+          homeChart.data.labels.push(now);
+          homeChart.data.datasets[0].data.push(speed);
+          homeChart.update();
+        }
+
+        setInterval(fetchSpeed, 1000);
+        setInterval(updateChart, 1000);
+      });
+
+      // calculate traffic overview: 
+      let trafficChart;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const trafficChartEl = document.getElementById("trafficOverviewChart");
+        if (!trafficChartEl) return;
+
+        const trafficCtx = trafficChartEl.getContext("2d");
+
+        const trafficChart = new Chart(trafficCtx, {
+          type: "bar",
+          data: {
+            labels: ["TCP", "UDP"],
+            datasets: [{
+              label: "Connections",
+              data: [0, 0],
+              // backgroundColor: ["#b10fde", "#de0fd7"]
+              backgroundColor: getTrafficColors()
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+
+        // ✅ Fetch traffic data repeatedly
+        async function fetchTrafficData() {
+          try {
+            const res = await fetch("/traffic_overview");
+            const data = await res.json();
+
+            // ✅ Add this line to debug the response:
+            console.log("Traffic overview data:", data);
+
+            trafficChart.data.datasets[0].data = [
+              data.TCP || 0,
+              data.UDP || 0
+            ];
+            // Update the chart with new colors: 
+            trafficChart.data.datasets[0].backgroundColor = getTrafficColors();
+            trafficChart.update();
+          } catch (e) {
+            console.error("Failed to fetch traffic overview", e);
+          }
+        }
+
+        // added:
+        fetchTrafficData(); // Call once immediately
+        setInterval(fetchTrafficData, 2000); // Then every 2 seconds
+
+      });
+
+      function getTrafficColors() {
+        const isDark = document.body.classList.contains("dark-mode");
+        return isDark ? ["#4caf50", "#2196F3"] : ["#b10fde", "#de0fd7"];
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const homeChartEl = document.getElementById("homeNetworkChart");
+        if (!homeChartEl) return;
+
+        // Function to update IP tables
+        function updateIPTables() {
+          fetch('/top_bandwidth_ips')
+            .then(response => response.json())
+            .then(data => {
+              // Sort and filter blocked IPs
+              const blockedIPs = data
+                .filter(ip => ip.blocked)
+                .sort((a, b) => b.packets - a.packets)
+                .slice(0, 5);
+
+              // Sort and filter allowed IPs
+              const allowedIPs = data
+                .filter(ip => !ip.blocked)
+                .sort((a, b) => b.packets - a.packets)
+                .slice(0, 5);
+
+              // Update blocked IPs table
+              const blockedTableBody = document.querySelector('#blockedIpsTable tbody');
+              blockedTableBody.innerHTML = '';
+              blockedIPs.forEach(ip => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${ip.ip}</td>
+                <td>${ip.packets}</td>
+              `;
+                blockedTableBody.appendChild(row);
+              });
+
+              // Update allowed IPs table
+              const allowedTableBody = document.querySelector('#allowedIpsTable tbody');
+              allowedTableBody.innerHTML = '';
+              allowedIPs.forEach(ip => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                <td>${ip.ip}</td>
+                <td>${ip.packets}</td>
+              `;
+                allowedTableBody.appendChild(row);
+              });
+            })
+            .catch(error => {
+              console.error('Error fetching IP data:', error);
+            });
+        }
+
+        // Initial update
+        updateIPTables();
+
+        // Update every 5 seconds
+        setInterval(updateIPTables, 5000);
+
+        // Rest of your existing chart code...
+      });
+
+    </script>
+
+</body>
+
+</html>

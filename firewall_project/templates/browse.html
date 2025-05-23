@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directory Browser</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styless.css') }}">
+    <style>
+        .file-browser {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .file-item:hover {
+            background: #f5f5f5;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .file-name {
+            flex-grow: 1;
+        }
+
+        .file-size {
+            color: #666;
+            margin-left: 10px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .breadcrumb a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="file-browser">
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="/browse/">Home</a>
+        </div>
+        <div id="file-list"></div>
+    </div>
+
+    <script>
+        function updateBreadcrumb(path) {
+            const parts = path.split('/').filter(p => p);
+            let breadcrumb = '<a href="/browse/">Home</a>';
+            let currentPath = '';
+
+            parts.forEach(part => {
+                currentPath += '/' + part;
+                breadcrumb += ' / <a href="/browse' + currentPath + '">' + part + '</a>';
+            });
+
+            document.getElementById('breadcrumb').innerHTML = breadcrumb;
+        }
+
+        function formatSize(size) {
+            if (size === null) return '';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            let i = 0;
+            while (size >= 1024 && i < units.length - 1) {
+                size /= 1024;
+                i++;
+            }
+            return size.toFixed(1) + ' ' + units[i];
+        }
+
+        function loadDirectory(path = '') {
+            fetch('/browse/' + path)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        return;
+                    }
+
+                    updateBreadcrumb(data.path);
+
+                    const fileList = document.getElementById('file-list');
+                    fileList.innerHTML = '';
+
+                    data.items.sort((a, b) => {
+                        if (a.type === b.type) return a.name.localeCompare(b.name);
+                        return a.type === 'directory' ? -1 : 1;
+                    });
+
+                    data.items.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'file-item';
+
+                        const icon = document.createElement('span');
+                        icon.className = 'file-icon';
+                        icon.innerHTML = item.type === 'directory' ? '📁' : '📄';
+
+                        const name = document.createElement('span');
+                        name.className = 'file-name';
+                        if (item.type === 'directory') {
+                            const link = document.createElement('a');
+                            link.href = '/browse/' + (data.path ? data.path + '/' : '') + item.name;
+                            link.textContent = item.name;
+                            name.appendChild(link);
+                        } else {
+                            const link = document.createElement('a');
+                            link.href = '/download/' + (data.path ? data.path + '/' : '') + item.name;
+                            link.textContent = item.name;
+                            name.appendChild(link);
+                        }
+
+                        const size = document.createElement('span');
+                        size.className = 'file-size';
+                        size.textContent = formatSize(item.size);
+
+                        div.appendChild(icon);
+                        div.appendChild(name);
+                        div.appendChild(size);
+                        fileList.appendChild(div);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error loading directory contents');
+                });
+        }
+
+        // Load the current directory
+        window.onload = function () {
+            const path = window.location.pathname.replace('/browse/', '');
+            loadDirectory(path);
+        };
+    </script>
+</body>
+
+</html>

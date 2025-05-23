@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Packet Table</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/themes.css') }}">
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            background-color: var(--bg-color);
+            /* additional */
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        h1 {
+            font-size: 36px;
+            text-border: 3px solid #fff;
+            -webkit-text-stroke: 1px var(--header-text);
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            margin-bottom: 20px;
+            background: -webkit-linear-gradient(var(--header-bg), var(--text-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .return-button,
+        .moni-button {
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            padding: 8px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13.333px;
+            transition: background-color 0.3s ease;
+        }
+
+        .return-button:hover,
+        .moni-button:hover {
+            background-color: var(--button-hover);
+        }
+
+        .house_i_think {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            background-color: var(--bg-color);
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        th {
+            background-color: var(--table-header);
+            color: var(--table-header-text);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        th:hover {
+            background-color: var(--table-header-hover);
+        }
+
+        .custom-header {
+            background-color: var(--table-header);
+            /* background-color: #c68cff; */
+            transition: background-color 0.3s ease;
+            color: var(--table-header-text);
+        }
+
+        .custom-header:hover {
+            background-color: var(--table-header-hover);
+        }
+
+        .info-box {
+            margin-top: 20px;
+            display: none;
+            background-color: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            position: relative;
+            top: 100%;
+            bottom: -100px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-left: 10px solid var(--header-bg);
+            z-index: 1000;
+        }
+
+        #infoText {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .container {
+            position: absolute;
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--text-color);
+            display: inline-block;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .arrow {
+            position: absolute;
+            top: 1px;
+            left: 2%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            font-size: 20px;
+            animation: bounce 1s infinite;
+            color: var(--text-color);
+        }
+
+        .arrow span {
+            display: block;
+            font-size: 17px;
+            margin-top: 5px;
+        }
+
+        .dr {}
+
+        /* second table */
+        .second-table {
+            width: 60%;
+            margin: 20px auto;
+            font-size: 12px;
+            table-layout: auto;
+            border-collapse: collapse;
+            margin-left: 0;
+            margin-right: auto;
+            text-align: center auto;
+            background-color: var(--bg-color);
+        }
+
+        .second-table th {
+            background-color: var(--table-header);
+            color: var(--table-header-text);
+            padding: 6px;
+            text-align: center auto;
+        }
+
+        .second-table td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            white-space: normal;
+            word-wrap: break-word;
+            background-color: var(--table-row-even);
+            color: var(--text-color);
+        }
+
+        .second-table td:hover {
+            background-color: var(--table-row-hover);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 25px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            margin-top: 80px;
+            width: 56%;
+            background: -webkit-linear-gradient(var(--header-bg), var(--text-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            -webkit-text-stroke: 0;
+        }
+
+        .header h2 {
+            margin-top: 0;
+            width: 100%;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* for info */
+        /* Dark mode styles */
+        body.dark-mode {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode h1 {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode h2 {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode table,
+        body.dark-mode th,
+        body.dark-mode td {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .return-button,
+        body.dark-mode .moni-button,
+        body.dark-mode .info-section {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .return-button:hover,
+        body.dark-mode .moni-button:hover,
+        body.dark-mode .info-section:hover {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .info-box {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .second-table th {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .second-table td {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .arrow {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode .container {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode th.custom-header {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+
+        body.dark-mode th.custom-header:hover {
+            /* Remove specific dark mode overrides since we're using theme variables */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2>Interactive Packet Table</h2>
+        <div class="controls">
+            <button class="return-button" onclick="window.location.href='{{ url_for('home') }}'">Return to Main
+                Page</button>
+            <button class="moni-button" onclick="window.location.href='{{ url_for('monitor') }}'">Return to
+                Monitor</button>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <svg viewBox="0 0 400 400" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <g>
+                        <polygon points="213.3,26.7 213.3,0 186.7,0 186.7,26.7 186.7,53.3 213.3,53.3"></polygon>
+                        <rect height="26.7" width="26.7" x="53.3" y="53.3"></rect>
+                        <rect height="26.7" width="26.7" x="320" y="53.3"></rect>
+                        <rect height="26.7" width="26.7" x="80" y="80"></rect>
+                        <polygon points="213.3,106.7 240,106.7 240,80 213.3,80 186.7,80 160,80 160,106.7 186.7,106.7">
+                        </polygon>
+                        <rect height="26.7" width="26.7" x="293.3" y="80"></rect>
+                        <rect height="26.7" width="26.7" x="133.3" y="106.7"></rect>
+                        <rect height="26.7" width="26.7" x="240" y="106.7"></rect>
+                        <rect height="26.7" width="26.7" x="106.7" y="133.3"></rect>
+                        <rect height="26.7" width="26.7" x="266.7" y="133.3"></rect>
+                        <polygon points="53.3,186.7 26.7,186.7 0,186.7 0,213.3 26.7,213.3 53.3,213.3"></polygon>
+                        <polygon points="106.7,186.7 106.7,160 80,160 80,186.7 80,213.3 80,240 106.7,240 106.7,213.3">
+                        </polygon>
+                        <polygon
+                            points="293.3,213.3 293.3,240 320,240 320,213.3 320,186.7 320,160 293.3,160 293.3,186.7">
+                        </polygon>
+                        <polygon points="373.3,186.7 346.7,186.7 346.7,213.3 373.3,213.3 400,213.3 400,186.7"></polygon>
+                        <rect height="26.7" width="26.7" x="106.7" y="240"></rect>
+                        <rect height="26.7" width="26.7" x="266.7" y="240"></rect>
+                        <rect height="26.7" width="26.7" x="133.3" y="266.7"></rect>
+                        <rect height="26.7" width="26.7" x="240" y="266.7"></rect>
+                        <rect height="26.7" width="26.7" x="80" y="293.3"></rect>
+                        <polygon
+                            points="186.7,293.3 160,293.3 160,320 186.7,320 213.3,320 240,320 240,293.3 213.3,293.3">
+                        </polygon>
+                        <rect height="26.7" width="26.7" x="293.3" y="293.3"></rect>
+                        <rect height="26.7" width="26.7" x="53.3" y="320"></rect>
+                        <rect height="26.7" width="26.7" x="320" y="320"></rect>
+                        <polygon points="186.7,373.3 186.7,400 213.3,400 213.3,373.3 213.3,346.7 186.7,346.7"></polygon>
+                    </g>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <h1>Information about Network Traffic data: </h1>
+
+    <table id="packetTable">
+        <thead>
+            <tr>
+                <th onclick="showInfo('🕒 Time tells you when the packet was captured.')">Date and Time</th>
+                <th onclick="showInfo('📤 Source is where the packet came from.')">Source</th>
+                <th onclick="showInfo('📥 Destination is where the packet was going.')">Destination</th>
+                <th onclick="showInfo('🔌 Protocol is the communication method used.')">Protocol</th>
+                <th onclick="showInfo('⚡ Speed shows how fast the packet was sent.')">Speed</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Example rows -->
+            <tr>
+                <th class="custom-header" onclick="showInformation('🕒 12:34:56 is an example of time ')">
+                    12:34:56
+                </th>
+                <th class="custom-header"
+                    onclick="showInformation('192.168.1.2 is an example for the source number. Where the packet came from — like the sender\'s address.')">
+                    192.168.1.2</th>
+                <th class="custom-header"
+                    onclick="showInformation('8.8.8.8 is primary DNS server for Google DNS. Where the packet is going — like the receiver\'s address. ')">
+                    8.8.8.8
+                </th>
+                <th class="custom-header"
+                    onclick="showInformation('🔌 Protocol can be either TCP or UDP. In this example it shows that our protocol is TCP')">
+                    TCP
+                </th>
+                <th class="custom-header"
+                    onclick="showInformation('⚡ 1.2 KB/s is how fast the packet was sent — like traffic speed for data.')">
+                    1.2 KB/s
+                </th>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="info-box" id="infoBox">
+        <p id="infoText">Placeholder info</p>
+    </div>
+
+    <div class="container">
+        <div class="arrow"> ⇧
+            <span>
+                Click any item for more information! </span>
+        </div>
+    </div>
+
+    </style>
+    </head>
+
+    <body>
+        <!-- <button onclick="toggleDarkMode()" class="return-button">Toggle Dark Mode</button> -->
+        <h2>Glossary</h2>
+
+        <table class="second-table">
+            <colgroup>
+                <col style="width: 25%;">
+                <col style="width: 75%;">
+            </colgroup>
+
+            <thead>
+                <tr>
+                    <th>Terms</th>
+                    <th>Definition</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>IP Address</td>
+                    <td>🌐An IP address is a unique number that identifies a device on a network, like a street address
+                        for your computer on the
+                        internet or Wi-Fi </td>
+                </tr>
+                <tr>
+                    <td>Packet </td>
+                    <td>📦 A data packet is a small piece of information sent over a network. Big files are broken into
+                        packets so they can
+                        travel faster and be reassembled at the destination. </td>
+                </tr>
+                <tr>
+                    <td>TCP </td>
+                    <td>🔄 TCP (Transmission Control Protocol) is a rule that helps computers send data reliably over
+                        the internet, making sure
+                        it arrives correctly and in the right order. </td>
+                </tr>
+                <tr>
+                    <td>UDP </td>
+                    <td>🚀 UDP (User Datagram Protocol) is a fast way to send data over the internet without checking if
+                        it arrived correctly. </td>
+                </tr>
+                <tr>
+                    <td>Firewall </td>
+                    <td>In a a network security device that monitors and filters incoming and outgoing network traffic
+                        based on an organization's
+                        previously established security policies.</td>
+                </tr>
+                <td>LAN </td>
+                <td>Stands for Local-Area Network. It's a collection of devices connected together in one physical
+                    location, such as a building, office, or home. </td>
+                </tr>
+                <tr>
+                    <td>WAN </td>
+                    <td>Stands for Wide-Area Network. It's a collection of area networks or other networks that
+                        communite with one another. </td>
+                </tr>
+
+                <!-- more rows... -->
+            </tbody>
+        </table>
+
+        <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+        <script>
+            function showInfo(message) {
+                const box = document.getElementById("infoBox");
+                const text = document.getElementById("infoText");
+                const arrow = document.querySelector(".arrow");
+                const arrowContainer = document.querySelector(".container");
+                text.innerText = message;
+                box.style.display = "block";
+                arrow.style.display = "none"; // Hide the arrow when the box is shown
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    box.style.display = "none";
+                }, 4000);
+
+                setTimeout(() => {
+                    arrow.style.display = "none";;
+                }, 4000);
+            }
+            function showInformation(message) {
+                const box = document.getElementById("infoBox");
+                const text = document.getElementById("infoText");
+                text.innerText = message;
+                box.style.display = "block";
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    box.style.display = "none";
+                }, 4000);
+            }
+
+            // addional:
+            document.addEventListener("DOMContentLoaded", function () {
+                // Apply dark mode if needed
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme === "dark") {
+                    document.body.classList.add("dark-mode");
+                } else {
+                    document.body.classList.remove("dark-mode");
+                }
+
+                // Attach click event to all data cells
+                // document.querySelectorAll("#packetTable tbody td").forEach((cell) => {
+
+                //chnaged to td
+                // document.querySelectorAll("#packetTable tbody td").forEach((cell) => {
+                //     cell.addEventListener("click", function () {
+                //         showInformation(this.innerText + " clicked!");
+                //     });
+                // });
+            });
+        </script>
+    </body>
+
+</html>
