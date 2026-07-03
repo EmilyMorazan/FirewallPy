@@ -123,6 +123,13 @@ pip install -r requirements.txt
 cd firewall_project
 sudo $(which python3) firewall.py
 #python firewall.py  # Modify if the entry script is different
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install flask scapy psutil pandas scikit-learn matplotlib
+python firewall.py
+```
 ```
 ### Troubleshooting
 if you have a socket permission errors use this command. 
@@ -132,5 +139,7 @@ sudo $(which python3) firewall.py
 ```
 ---
 ### 📜 License
-This project is licensed under blahblahblah
+In progress
+
+
 
